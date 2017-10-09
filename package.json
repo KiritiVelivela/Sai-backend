@@ -1,0 +1,23 @@
+{
+  "name": "ionic-auth-demo",
+  "version": "1.0.0",
+  "description": "demo app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kiriti Velivela",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.0",
+    "cors": "^2.8.4",
+    "express": "^4.15.4",
+    "jwt-simple": "^0.5.1",
+    "mongoose": "^4.11.10",
+    "morgan": "^1.8.2",
+    "nodemailer": "^4.1.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^2.0.0"
+  }
+}

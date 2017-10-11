@@ -1,7 +1,9 @@
 var User = require('../model/user');
+var Msg = require('../model/messages');
 var config = require('../config/database');
 var jwt = require('jwt-simple');
 var nodemailer = require('nodemailer');
+
 
 var smtpTransport = nodemailer.createTransport({
     service: "Gmail",
@@ -156,6 +158,41 @@ else
 	res.end("<h1>Request is from unknown source</h1>");
   console.log("email is not verified");
 }
+},
+
+addmessage: function(req, res) {
+  console.log(req.body);
+  var newMsg = Msg({
+      message: req.body.content,
+      toemail: req.body.to,
+      fromemail: req.body.from
+  });
+  console.log(newMsg);
+
+  newMsg.save(function(err, newMsg){
+      console.log("Hello addmessage action");
+      console.log(newMsg);
+      if (err){
+          res.json({success:false, msg:'Failed to save'})
+      }
+
+      else {
+          res.json({success:true, msg:'Successfully saved'});
+          // res.json({success:true, msg: 'Message sent'});
+      }
+  });
+},
+
+getmsgs: function(req,res) {
+  console.log("get messages action");
+  console.log(req.body.to);
+  Msg.find({to: req.body.to, from: req.body.from}, function(err, data) {
+    if (err) {
+      res.json({success: false, msg: err});
+    } else
+    console.log(data);
+    res.json({history: data});
+  });
 }
 
 

@@ -52,18 +52,3 @@ var gamer = module.exports = mongoose.model('User', userSchema);
 module.exports.getUsers = function(callback, limit) {
     gamer.find(callback);
 }
-
-
-
-// module.exports.updateVerfified = function(req, limit) {
-// console.log("request:" + req);
-//   gamer.update(
-//     {email: req },
-//     {update: {$set: {verified: "mail sent"}}},
-//    function (err, numAffected) {
-//      if (err) {
-//        return next(err);
-//      }
-//       console.log("user.js:" + numAffected.toString());
-//     });
-// }

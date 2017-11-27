@@ -9,7 +9,7 @@ var smtpTransport = nodemailer.createTransport({
     service: "Gmail",
     auth: {
         user: "skvelivela@gmail.com",
-        pass: ""
+        pass: "Seeyaa^^@N"
     }
 });
 var rand,mailOptions,host,link;
@@ -29,7 +29,7 @@ var functions = {
                 user.comparePassword(req.body.password, function(err, isMatch){
                     if(isMatch && !err) {
                         var token = jwt.encode(user, config.secret);
-                        res.json({success: true, token: token, email: req.body.email});
+                        res.json({success: true, verified: user.verified, token: token, email: req.body.email});
                     } else {
                         return res.status(403).send({success: false, msg: 'Authenticaton failed, wrong password.'});
                     }
@@ -160,28 +160,28 @@ else
 }
 },
 
-addmessage: function(req, res) {
-  console.log(req.body);
-  var newMsg = Msg({
-      message: req.body.content,
-      toemail: req.body.to,
-      fromemail: req.body.from
-  });
-  console.log(newMsg);
-
-  newMsg.save(function(err, newMsg){
-      console.log("Hello addmessage action");
-      console.log(newMsg);
-      if (err){
-          res.json({success:false, msg:'Failed to save'})
-      }
-
-      else {
-          res.json({success:true, msg:'Successfully saved'});
-          // res.json({success:true, msg: 'Message sent'});
-      }
-  });
-},
+// addmessage: function(req, res) {
+//   console.log(req.body);
+//   var newMsg = Msg({
+//       message: req.body.content,
+//       toemail: req.body.to,
+//       fromemail: req.body.from
+//   });
+//   console.log(newMsg);
+//
+//   newMsg.save(function(err, newMsg){
+//       console.log("Hello addmessage action");
+//       console.log(newMsg);
+//       if (err){
+//           res.json({success:false, msg:'Failed to save'})
+//       }
+//
+//       else {
+//           res.json({success:true, msg:'Successfully saved'});
+//           // res.json({success:true, msg: 'Message sent'});
+//       }
+//   });
+// },
 
 getmsgs: function(req,res) {
   console.log("get messages action");

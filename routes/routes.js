@@ -12,7 +12,7 @@ router.get('/getu', actions.getu);
 router.get('/send', actions.send);
 router.get('/verify', actions.verify);
 router.put('/sendup', actions.sendup);
-router.post('/sendmessage', actions.addmessage);
+// router.post('/sendmessage', actions.addmessage);
 router.post('/getmsg', actions.getmsgs);
 
 

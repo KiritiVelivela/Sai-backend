@@ -1,5 +1,6 @@
 var User = require('../model/user');
 var Msg = require('../model/messages');
+var Startups = require('../model/startup');
 var config = require('../config/database');
 var jwt = require('jwt-simple');
 var nodemailer = require('nodemailer');
@@ -193,9 +194,41 @@ getmsgs: function(req,res) {
     console.log(data);
     res.json({history: data});
   });
+},
+
+
+////////////////  ADD STARTUPS //////////////
+addStartup: function(req, res){
+    if((!req.body.startupname) || (!req.body.startupvision) || (!req.body.startupmission) || (!req.body.startupproblem) || (!req.body.startupsolution) || (!req.body.startupdescription)|| (!req.body.startupurl)){
+        console.log("inside addStartup action.js");
+        console.log(req.body);
+        // console.log(req.body.password);
+        res.json({success: false, msg: 'Enter all values'});
+    }
+    else {
+        var newStartup = Startups({
+            startupname: req.body.startupname,
+            startupvision: req.body.startupvision,
+            startupmission: req.body.startupmission,
+            startupproblem: req.body.startupproblem,
+            startupsolution: req.body.startupsolution,
+            startupdescription: req.body.startupdescription,
+            startupurl: req.body.startupurl
+        });
+
+        newStartup.save(function(err, newStartup){
+            if (err){
+                res.json({success:false, msg:'Failed to save'})
+            }
+
+            else {
+                // res.json({success:true, msg:'Successfully saved'});
+                res.json({success:true, msg: 'Startup Sucessfully created'});
+            }
+        });
+        functions.send(req);
+    }
 }
-
-
 
 
 }

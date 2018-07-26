@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
     bodyParser = require('body-parser');
     nodemailer = require('nodemailer');
     Msg = require('./model/messages');
-
+    // var multer = require('multer');
 
 
 mongoose.connect(config.database);
@@ -21,8 +21,18 @@ mongoose.connection.on('open', function(){
     app.use(cors());
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(bodyParser.json());
-    app.use(routes);
     app.use(passport.initialize());
+    // app.use(function(req, res, next) {
+    //   if(req.path === '/') {
+    //     res.json({hi: true});
+    //   } else {
+    //     next();
+    //   }
+    //   console.log("I am in the middleware");
+    // })
+    app.use(routes);
+    // EJS
+    app.set('view engine', 'ejs');
     require('./config/passport')(passport);
 
     http = require('http').Server(app);
@@ -58,6 +68,6 @@ mongoose.connection.on('open', function(){
     });
 
     http.listen(process.env.PORT || '3333', function(){
-        console.log('server is running');
+        console.log('server is running on 3333');
     })
 })

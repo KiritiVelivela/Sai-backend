@@ -31,6 +31,22 @@ var startupSchema = mongoose.Schema({
   startupurl: {
     type: String,
     required: true
+  },
+  filename:{
+    type: String,
+    required: true
+  },
+  originalName: {
+    type: String,
+    required: true
+  },
+  path: {
+    type: String,
+    required: true
+  },
+  created: {
+    type: Date,
+    default: dt.format('Y-m-d H:M:S')
   }
 });
 
@@ -38,9 +54,10 @@ var startups = module.exports = mongoose.model('Startups', startupSchema);
 
 // Get Messages
 
-// startupSchema.getmessages = function(callback, limit) {
-//     Messages.find(callback);
-// }
+module.exports.getStartups = function(callback, limit) {
+    console.log("inside get startups");
+    startups.find(callback);
+}
 
 module.exports.addStartup = (startups, callback) => {
   console.log("inside startup model");

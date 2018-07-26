@@ -1,9 +1,26 @@
 var User = require('../model/user');
 var Msg = require('../model/messages');
+var Image = require('../model/images');
 var Startups = require('../model/startup');
 var config = require('../config/database');
 var jwt = require('jwt-simple');
 var nodemailer = require('nodemailer');
+var multer = require('multer');
+
+
+let UPLOAD_PATH = module.exports = 'uploads';
+    // Multer Settings for file upload
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, UPLOAD_PATH)
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+})
+let upload = module.exports = multer({ storage: storage })
+
+
 
 
 var smtpTransport = nodemailer.createTransport({
@@ -199,13 +216,20 @@ getmsgs: function(req,res) {
 
 ////////////////  ADD STARTUPS //////////////
 addStartup: function(req, res){
+  console.log("inside addStartup");
+  console.log(req.body);
+  console.log(req);
     if((!req.body.startupname) || (!req.body.startupvision) || (!req.body.startupmission) || (!req.body.startupproblem) || (!req.body.startupsolution) || (!req.body.startupdescription)|| (!req.body.startupurl)){
+        console.log(req.body);
+        console.log(req.files[0].filename, 'files');
         console.log("inside addStartup action.js");
         console.log(req.body);
         // console.log(req.body.password);
         res.json({success: false, msg: 'Enter all values'});
     }
     else {
+        console.log(req.body);
+        console.log();
         var newStartup = Startups({
             startupname: req.body.startupname,
             startupvision: req.body.startupvision,
@@ -213,7 +237,10 @@ addStartup: function(req, res){
             startupproblem: req.body.startupproblem,
             startupsolution: req.body.startupsolution,
             startupdescription: req.body.startupdescription,
-            startupurl: req.body.startupurl
+            startupurl: req.body.startupurl,
+            filename: req.files.filename,
+            originalName: req.files.originalname,
+            path: req.files.path
         });
 
         newStartup.save(function(err, newStartup){
@@ -228,8 +255,108 @@ addStartup: function(req, res){
         });
         functions.send(req);
     }
-}
+},
 
+getStartups: function(req, res) {
+  console.log("reached actions.getStartups");
+  Startups.getStartups(function(err, startups) {
+    if (err) {
+      throw err;
+    }
+    console.log(startups);
+    res.json(startups);
+  });
+},
+
+// Delete one image by its ID
+delStartups: function(req, res, next) {
+    console.log("Inside Delete before assigning id");
+    let startupId = req.params.id;
+    console.log("INside Delete");
+
+    console.log(startupId);
+
+
+    Startups.findByIdAndRemove(startupId, (err, startups) => {
+        if (err && startups) {
+          console.log("Error in Delete");
+          res.sendStatus(400);
+        }
+          console.log("Delete Successfull");
+          res.json({success:true, msg: 'Startup Sucessfully Deleted', id: startups});
+    });
+},
+
+///////////////////// IMAGE UPLOAD CODE ///////////////////////
+
+// Init app
+// const app = express();
+
+// // EJS
+// app.set('view engine', 'ejs');
+
+// Public Folder
+// app.use(express.static('./public'));
+//
+// app.get('/', (req, res) => res.render('index'));
+
+getAllImg: function(req, res, next){
+  Image.find({}, '-__v').lean().exec((err, images) => {
+    if (err) {
+      console.log(err);
+        res.sendStatus(400);
+    }
+
+    // Manually set the correct URL to each image
+    for (let i = 0; i < images.length; i++) {
+        var img = images[i];
+        img.url = req.protocol + '://' + req.get('host') + '/uploads/' + img.filename;
+        console.log(img.url);
+    }
+    console.log(images);
+    res.json(images);
+  })
+},
+
+
+addImage: function(req, res, next) {
+  console.log(req.body, 'Body');
+  console.log(req.files[0].filename, 'files');
+  console.log("Inside addImage");
+  var newImage = Image({
+      filename: req.files[0].filename,
+      originalName: req.files[0].originalname,
+      path: req.files[0].path
+  });
+
+  newImage.save(function(err, newImage){
+      if (err){
+        console.log(err);
+        console.log("Failed to save");
+          res.json({success:false, msg:'Failed to save'})
+      }
+
+      else {
+          // res.json({success:true, msg:'Successfully saved'});
+          console.log("Image Sucessfully uploaded");
+          res.json({success:true, msg: 'Image Sucessfully uploaded'});
+      }
+  });
+},
+
+getOneImg: function(req, res, next) {
+  console.log(req.params);
+    let imgId = req.params.id;
+
+    Image.findById(imgId, (err, image) => {
+        if (err) {
+            res.sendStatus(400);
+        }
+        // stream the image back by loading the file
+        res.setHeader('Content-Type', 'image/jpeg');
+        fs.createReadStream(path.join(UPLOAD_PATH, image.filename)).pipe(res);
+    });
+}
 
 }
 
